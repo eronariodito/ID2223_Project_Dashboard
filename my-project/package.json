@@ -13,6 +13,7 @@
     "axios": "^1.5.1",
     "chart.js": "",
     "chartjs-adapter-date-fns": "",
+    "react-chartjs-2": "",
     "d3": "^7.9.0",
     "d3-geo": "^3.1.1",
     "npm-check-updates": "^17.1.13",
