@@ -30,6 +30,9 @@ const SwedenMap2 = ({
           return (
             <>
               {geographies.map((geo) => {
+                if (tooltip_data == null) {
+                  tooltip_data = 0;
+                }
                 const region_name = geo.properties.code;
                 const color = getColor(tooltip_data[region_name].actual, 15000);
                 return (
