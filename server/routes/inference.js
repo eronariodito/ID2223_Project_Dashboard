@@ -32,18 +32,34 @@ module.exports = (connection) => {
 
   router.get("/region", async (req, res) => {
     try {
-      const { country_code } = req.query;
+      const { country_code, start_date, end_date } = req.query;
+
+      // Convert start_date and end_date to Date objects (if provided)
+      const startDate = start_date ? new Date(start_date) : null;
+      const endDate = end_date ? new Date(end_date) : null;
 
       // Build the aggregation pipeline based on whether countrycode is provided
       const pipeline = [];
+      // Match stage - only include if country_code is provided
+      const matchStage = {};
 
       // Match stage - only include if countrycode is provided
       if (country_code) {
-        pipeline.push({
-          $match: {
-            country_code: country_code.toUpperCase(),
-          },
-        });
+        matchStage.country_code = country_code.toUpperCase();
+      }
+
+      // Include date range filter if provided
+      if (startDate && endDate) {
+        matchStage.date = { $gte: startDate, $lte: endDate }; // $gte: greater than or equal, $lte: less than or equal
+      } else if (startDate) {
+        matchStage.date = { $gte: startDate };
+      } else if (endDate) {
+        matchStage.date = { $lte: endDate };
+      }
+
+      // Only add the $match stage if filters are applied
+      if (Object.keys(matchStage).length > 0) {
+        pipeline.push({ $match: matchStage });
       }
 
       // Group stage
@@ -57,6 +73,19 @@ module.exports = (connection) => {
             },
           },
           count: { $sum: 1 },
+        },
+      });
+
+      pipeline.push({
+        $project: {
+          _id: 1,
+          entries: {
+            $sortArray: {
+              input: "$entries",
+              sortBy: { date: 1 }, // 1 for ascending order (date)
+            },
+          },
+          count: 1,
         },
       });
 
