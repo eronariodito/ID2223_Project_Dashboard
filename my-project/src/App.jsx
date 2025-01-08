@@ -53,7 +53,7 @@ function App() {
     };
 
     axios
-      .get("http://localhost:3000/inference/region", { params })
+      .get(`${import.meta.env.VITE_BACKEND_URL}/inference/region`, { params })
       .then((response) => {
         setPredictionData(response.data.data[0].entries);
         const dates = response.data.data[0].entries.map(
@@ -74,7 +74,7 @@ function App() {
       .catch((error) => console.error("Error fetching data:", error));
 
     axios
-      .get("http://localhost:3000/energy/latest_all", { params })
+      .get(`${import.meta.env.VITE_BACKEND_URL}/energy/latest_all`, { params })
       .then((response) => {
         console.log(response);
         const date_target = new Date(response.data.data[0].latestEntry.date);
@@ -84,7 +84,9 @@ function App() {
         const target = { date: isoDate };
 
         axios
-          .get("http://localhost:3000/inference/get_all", { params: target })
+          .get(`${import.meta.env.VITE_BACKEND_URL}/inference/get_all`, {
+            params: target,
+          })
           .then((response) => {
             console.log(response);
             const result = {
@@ -128,7 +130,7 @@ function App() {
     };
 
     axios
-      .get("http://localhost:3000/inference/region", { params })
+      .get(`${import.meta.env.VITE_BACKEND_URL}/inference/region`, { params })
       .then((response) => {
         setPredictionData(response.data.data[0].entries);
         const dates = response.data.data[0].entries.map(
@@ -168,7 +170,7 @@ function App() {
     };
 
     axios
-      .get("http://localhost:3000/energy/region", { params })
+      .get(`${import.meta.env.VITE_BACKEND_URL}/energy/region`, { params })
       .then((response) => {
         const list2Map = new Map(
           prediction_data.map((item) => [item.date, item.data])
