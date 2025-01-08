@@ -110,5 +110,72 @@ module.exports = (connection) => {
     }
   });
 
+  router.get("/get_all", async (req, res) => {
+    try {
+      const { date } = req.query; // Retrieve the 'date' from the query parameters
+
+      // Build the aggregation pipeline
+      const pipeline = [];
+
+      // Match stage for a specific date (if provided)
+      if (date) {
+        const targetDate = new Date(date);
+
+        // Match documents with the given date
+        pipeline.push({
+          $match: {
+            date: {
+              $eq: targetDate, // Match the exact date
+            },
+          },
+        });
+      }
+
+      // Sort stage - ensure data is sorted by date in descending order
+      pipeline.push({
+        $sort: { date: -1 }, // -1 for descending order (latest date first)
+      });
+
+      // Group stage - get the latest entry for each country_code
+      pipeline.push({
+        $group: {
+          _id: "$country_code",
+          latestEntry: { $first: "$$ROOT" }, // $$ROOT references the whole document
+        },
+      });
+
+      // Sort by country_code (optional)
+      pipeline.push({
+        $sort: { _id: 1 },
+      });
+
+      // Project the desired fields
+      pipeline.push({
+        $project: {
+          _id: 1,
+          latestEntry: {
+            date: "$latestEntry.date",
+            data: "$latestEntry.prediction", // Replace "load" with the correct field
+          },
+        },
+      });
+
+      // Execute the aggregation query
+      const groupedData = await Inference.aggregate(pipeline);
+
+      res.json({
+        success: true,
+        data: groupedData,
+        query: { date },
+      });
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      res.status(500).json({
+        success: false,
+        error: error.message,
+      });
+    }
+  });
+
   return router;
 };

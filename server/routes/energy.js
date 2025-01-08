@@ -106,5 +106,55 @@ module.exports = (connection) => {
     }
   });
 
+  router.get("/latest_all", async (req, res) => {
+    try {
+      // Build the aggregation pipeline
+      const pipeline = [];
+
+      // Sort stage - ensure data is sorted by date in descending order
+      pipeline.push({
+        $sort: { date: -1 }, // -1 for descending order (latest date first)
+      });
+
+      // Group stage - get the latest entry for each country_code
+      pipeline.push({
+        $group: {
+          _id: "$country_code",
+          latestEntry: { $first: "$$ROOT" }, // $$ROOT references the whole document
+        },
+      });
+
+      // Sort by country_code (optional)
+      pipeline.push({
+        $sort: { _id: 1 },
+      });
+
+      // Project the desired fields
+      pipeline.push({
+        $project: {
+          _id: 1,
+          latestEntry: {
+            date: "$latestEntry.date",
+            data: "$latestEntry.load", // Replace "load" with the correct field
+          },
+        },
+      });
+
+      // Execute the aggregation query
+      const groupedData = await Energy.aggregate(pipeline);
+
+      res.json({
+        success: true,
+        data: groupedData,
+      });
+    } catch (error) {
+      console.error("Error fetching latest data:", error);
+      res.status(500).json({
+        success: false,
+        error: error.message,
+      });
+    }
+  });
+
   return router;
 };
