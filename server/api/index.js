@@ -4,8 +4,8 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 
-const inferenceRouter = require("./routes/inference");
-const energyRouter = require("./routes/energy");
+const inferenceRouter = require("../routes/inference");
+const energyRouter = require("../routes/energy");
 
 const uri = process.env.DATABASE_URI;
 
