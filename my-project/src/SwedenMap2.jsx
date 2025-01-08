@@ -31,7 +31,32 @@ const SwedenMap2 = ({
             <>
               {geographies.map((geo) => {
                 if (tooltip_data == null) {
-                  tooltip_data = 0;
+                  tooltip_data = {
+                    SE_1: {
+                      date_actual: 0,
+                      actual: 0,
+                      next_date: 0,
+                      next_prediction: 0,
+                    },
+                    SE_2: {
+                      date_actual: 0,
+                      actual: 0,
+                      next_date: 0,
+                      next_prediction: 0,
+                    },
+                    SE_3: {
+                      date_actual: 0,
+                      actual: 0,
+                      next_date: 0,
+                      next_prediction: 0,
+                    },
+                    SE_4: {
+                      date_actual: 0,
+                      actual: 0,
+                      next_date: 0,
+                      next_prediction: 0,
+                    },
+                  };
                 }
                 const region_name = geo.properties.code;
                 const color = getColor(tooltip_data[region_name].actual, 15000);
