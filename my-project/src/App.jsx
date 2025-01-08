@@ -4,7 +4,7 @@ import ChartPrediction from "./ChartPrediction";
 import ChartHind from "./ChartHind";
 import axios from "axios";
 import { Rings } from "react-loader-spinner";
-import SwedenMap from "./SwedenMap";
+// import SwedenMap from "./SwedenMap";
 import SwedenMap2 from "./SwedenMap2";
 
 function App() {
