@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, useLayoutEffect } from "react";
-import reactLogo from "./assets/react.svg";
 import "./App.css";
 import ChartPrediction from "./ChartPrediction";
 import ChartHind from "./ChartHind";
